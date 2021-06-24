@@ -14,7 +14,7 @@ We offer two specific challenges to promote the development of EEG decoding to u
 You could use your own [Conda](https://www.anaconda.com/products/individual) environment or create a new one with:
 
 ```
-$ conda create --name beetl python=3.9 numpy
+$ conda create --name beetl python=3.9 numpy scikit-learn=0.23
 $ conda activate beetl
 $ pip install git+https://github.com/sylvchev/beetl-competition
 ```
@@ -31,6 +31,3 @@ ds = BeetlSleepDataset()
 ds.download()
 X, y, info = ds.get_data()
 ```
-
-
-
