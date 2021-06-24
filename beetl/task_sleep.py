@@ -1,16 +1,17 @@
+import os
+import os.path as osp
+import shutil
+
+import numpy as np
+from mne import set_config
 from moabb.datasets.download import (
-    fs_get_file_list,
     fs_get_file_hash,
     fs_get_file_id,
+    fs_get_file_list,
     get_dataset_path,
 )
 from moabb.utils import set_download_dir
 from pooch import HTTPDownloader, Unzip, retrieve
-import os.path as osp
-import os
-import shutil
-import numpy as np
-
 
 BEETL_URL = "https://ndownloader.figshare.com/files/"
 
@@ -34,7 +35,9 @@ class BeetlDataset:
 class BeetlSleepDataset(BeetlDataset):
     def __init__(self):
         super().__init__(
-            figshare_id=14779407, code="beetlsleep", subject_list=range(10),
+            figshare_id=14779407,
+            code="beetlsleep",
+            subject_list=range(10),
         )
 
     def data_path(self, subject):
@@ -82,12 +85,16 @@ class BeetlSleepDataset(BeetlDataset):
         """
         if path:
             set_download_dir(path)
+            set_config("MNE_DATASETS_{}_PATH".format(self.code.upper()), path)
+            # TODO: Fix FileExistsError: [Errno 17] File exists: '/Users/sylchev/test_compet in
+            # moabb/utils.py in set_download_dir(path), l. 54
 
         subjects = self.subject_list if subjects is None else subjects
         # Competition files
         spath = []
         for s in subjects:
             spath.append(self.data_path(s))
+        return osp.dirname(spath[-1][0])
 
     def get_data(self, path=None, subjects=None):
         """Get data as list of numpy array, labels and metadata
