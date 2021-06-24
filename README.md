@@ -26,9 +26,11 @@ If you use your own conda environment, you just need to type `pip install git+ht
 Once beetl is installed, you could download the data with
 
 ```
-from beetl import CrossSubjectSleep, CrossDatasetMI
-
-CrossSubjectSleep.download()
-CrossDatasetMI.download()
+from beetl.task_sleep import BeetlSleepDataset
+ds = BeetlSleepDataset()
+ds.download()
+X, y, info = ds.get_data()
 ```
+
+
 
