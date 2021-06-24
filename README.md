@@ -9,12 +9,28 @@ We offer two specific challenges to promote the development of EEG decoding to u
 * Task 1 is a cross-subject sleep stage decoding challenge reflecting the need for transfer learning in clinical diagnostics. This challenge aims to compare and give a benchmark of transfer learning algorithms in the literature.
 * Task 2 is a cross-dataset motor imagery decoding challenge reflecting the need for transfer learning in human interfacing. This challenge aims to promote new algorithms that can utilise EEG data across data sets or data centers.
 
+## Getting started
+
+You could use your own [Conda](https://www.anaconda.com/products/individual) environment or create a new one with:
+
+```
+$ conda create --name beetl python=3.9 numpy
+$ conda activate beetl
+$ pip install git+https://github.com/sylvchev/beetl-competition
+```
+
+If you use your own conda environment, you just need to type `pip install git+https://github.com/sylvchev/beetl-competition`
+
 ## How to start
 
-Clone this repository and download the data with
+Once beetl is installed, you could download the data with
 
 ```
-CrossSubjectSleep.download()
-CrossDatasetMI.download()
+from beetl.task_sleep import BeetlSleepDataset
+ds = BeetlSleepDataset()
+ds.download()
+X, y, info = ds.get_data()
 ```
+
+
 
