@@ -1,4 +1,9 @@
-from moabb.datasets.download import fs_get_file_list, fs_get_file_hash, fs_get_file_id, get_dataset_path
+from moabb.datasets.download import (
+    fs_get_file_list,
+    fs_get_file_hash,
+    fs_get_file_id,
+    get_dataset_path,
+)
 from moabb.utils import set_download_dir
 from pooch import HTTPDownloader, Unzip, retrieve
 import os.path as osp
@@ -9,7 +14,8 @@ import numpy as np
 
 BEETL_URL = "https://ndownloader.figshare.com/files/"
 
-class BeetlDataset():
+
+class BeetlDataset:
     def __init__(self, figshare_id, code, subject_list):
         self.figshare_id = figshare_id
         self.code = code
@@ -28,9 +34,7 @@ class BeetlDataset():
 class BeetlSleepDataset(BeetlDataset):
     def __init__(self):
         super().__init__(
-            figshare_id=14779407,
-            code = "beetlsleep",
-            subject_list = range(10),
+            figshare_id=14779407, code="beetlsleep", subject_list=range(10),
         )
 
     def data_path(self, subject):
@@ -44,14 +48,23 @@ class BeetlSleepDataset(BeetlDataset):
         spath = []
         for f in fsn.keys():
             if not osp.exists(osp.join(path, "s{}r1X.npy".format(subject))):
-                retrieve(BEETL_URL+fsn[f], reg[fsn[f]], fsn[f], path, processor=Unzip(), downloader=HTTPDownloader(progressbar=True))
-                zpath = osp.join(path, fsn[f]+".unzip")
+                retrieve(
+                    BEETL_URL + fsn[f],
+                    reg[fsn[f]],
+                    fsn[f],
+                    path,
+                    processor=Unzip(),
+                    downloader=HTTPDownloader(progressbar=True),
+                )
+                zpath = osp.join(path, fsn[f] + ".unzip")
                 for i in range(10):
                     fx, fy = "s{}r1X.npy".format(i), "s{}r1y.npy".format(i)
                     shutil.move(osp.join(zpath, fx), osp.join(path, fx))
                     shutil.move(osp.join(zpath, fy), osp.join(path, fy))
-                shutil.move(osp.join(zpath, 'headerInfo.npy'), osp.join(path, 'headerInfo.npy'))
-                os.rmdir(osp.join(path, fsn[f]+".unzip"))
+                shutil.move(
+                    osp.join(zpath, "headerInfo.npy"), osp.join(path, "headerInfo.npy")
+                )
+                os.rmdir(osp.join(path, fsn[f] + ".unzip"))
         spath.append(osp.join(path, "s{}r1X.npy".format(subject)))
         spath.append(osp.join(path, "s{}r1y.npy".format(subject)))
         spath.append(osp.join(path, "headerInfo.npy"))
@@ -100,7 +113,7 @@ class BeetlSleepDataset(BeetlDataset):
         for s in subjects:
             files = self.data_path(s)
             for f in files:
-                if osp.basename(f) != 'headerInfo.npy':
+                if osp.basename(f) != "headerInfo.npy":
                     spath.append(f)
                 else:
                     hd = f
@@ -108,11 +121,11 @@ class BeetlSleepDataset(BeetlDataset):
         X_domain, y_domain, meta_domain = [], [], []
         for p in spath:
             d = np.load(p, allow_pickle=True)
-            if osp.basename(p)[4] == 'X':
+            if osp.basename(p)[4] == "X":
                 X_domain.append(d)
-            elif osp.basename(p)[4] == 'y':
+            elif osp.basename(p)[4] == "y":
                 y_domain.append(d)
-            elif osp.basename(p) == 'headerInfo.npy':
+            elif osp.basename(p) == "headerInfo.npy":
                 meta_domain = d
         X_domain = np.concatenate(X_domain)
         y_domain = np.concatenate(y_domain)

@@ -1,7 +1,7 @@
 numpy
 scipy
 mne
-scikit-learn>=0.22
+scikit-learn>=0.23
 pandas
 coloredlogs
 moabb
