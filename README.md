@@ -1,5 +1,5 @@
 # NeurIPS 2021 BEETL Competition - Benchmarks for EEG Transfer Learning
-## The this the package for loading competition data
+** The this the package for loading competition data **
 
 ## Competition information
 
