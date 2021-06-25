@@ -1,4 +1,5 @@
 # NeurIPS 2021 BEETL Competition - Benchmarks for EEG Transfer Learning
+## The this the package for loading competition data
 
 ## Competition information
 
@@ -23,11 +24,11 @@ If you use your own conda environment, you just need to type `pip install git+ht
 
 ## How to start
 
-Once beetl is installed, you could download the data with
+Once beetl is installed, you could download the data with, 'path' returns the folder name contains the data
 
 ```
 from beetl.task_sleep import BeetlSleepDataset
 ds = BeetlSleepDataset()
-ds.download()
+path = ds.download()
 X, y, info = ds.get_data()
 ```
