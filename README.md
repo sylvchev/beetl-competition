@@ -20,7 +20,7 @@ $ conda activate beetl
 $ pip install git+https://github.com/sylvchev/beetl-competition
 ```
 
-If you use your own conda environment, you just need to type `pip install git+https://github.com/sylvchev/beetl-competition`
+If you use your own conda environment, you just need to type `pip install git+https://github.com/sylvchev/beetl-competition` or `pip install -e git+https://github.com/sylvchev/beetl-competition#egg=beetl-competition`
 
 ## How to start
 

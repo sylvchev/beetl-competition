@@ -26,17 +26,37 @@ class BeetlDataset:
         pass
 
     def download(self, path=None, subjects=None):
-        pass
+        """Download datasets for sleep task
+
+        Parameters
+        ----------
+        path: str | None
+            Path to download the data, store in ~/mne_data if None
+        subjects: list | None
+            list of subject, default=None to select all subjects
+        """
+        if path:
+            set_download_dir(path)
+            set_config("MNE_DATASETS_{}_PATH".format(self.code.upper()), path)
+            # TODO: Fix FileExistsError: [Errno 17] File exists: '/Users/sylchev/test_compet in
+            # moabb/utils.py in set_download_dir(path), l. 54
+
+        subjects = self.subject_list if subjects is None else subjects
+        # Competition files
+        spath = []
+        for s in subjects:
+            spath.append(self.data_path(s))
+        return osp.dirname(spath[-1][0])
 
     def get_data(self, subjects=None):
         pass
 
 
-class BeetlSleepDataset(BeetlDataset):
+class BeetlSleepTutorial(BeetlDataset):
     def __init__(self):
         super().__init__(
             figshare_id=14779407,
-            code="beetlsleep",
+            code="beetlsleeptutorial",
             subject_list=range(10),
         )
 
@@ -60,7 +80,7 @@ class BeetlSleepDataset(BeetlDataset):
                     downloader=HTTPDownloader(progressbar=True),
                 )
                 zpath = osp.join(path, fsn[f] + ".unzip")
-                for i in range(10):
+                for i in self.subject_list:
                     fx, fy = "s{}r1X.npy".format(i), "s{}r1y.npy".format(i)
                     shutil.move(osp.join(zpath, fx), osp.join(path, fx))
                     shutil.move(osp.join(zpath, fy), osp.join(path, fy))
@@ -72,29 +92,6 @@ class BeetlSleepDataset(BeetlDataset):
         spath.append(osp.join(path, "s{}r1y.npy".format(subject)))
         spath.append(osp.join(path, "headerInfo.npy"))
         return spath
-
-    def download(self, path=None, subjects=None):
-        """Download datasets for sleep task
-
-        Parameters
-        ----------
-        path: str | None
-            Path to download the data, store in ~/mne_data if None
-        subjects: list | None
-            list of subject, default=None to select all subjects
-        """
-        if path:
-            set_download_dir(path)
-            set_config("MNE_DATASETS_{}_PATH".format(self.code.upper()), path)
-            # TODO: Fix FileExistsError: [Errno 17] File exists: '/Users/sylchev/test_compet in
-            # moabb/utils.py in set_download_dir(path), l. 54
-
-        subjects = self.subject_list if subjects is None else subjects
-        # Competition files
-        spath = []
-        for s in subjects:
-            spath.append(self.data_path(s))
-        return osp.dirname(spath[-1][0])
 
     def get_data(self, path=None, subjects=None):
         """Get data as list of numpy array, labels and metadata
@@ -125,16 +122,83 @@ class BeetlSleepDataset(BeetlDataset):
                 else:
                     hd = f
         spath.append(hd)
-        X_domain, y_domain, meta_domain = [], [], []
+        X, y, meta = [], [], []
         for p in spath:
             d = np.load(p, allow_pickle=True)
             if osp.basename(p)[4] == "X":
-                X_domain.append(d)
+                X.append(d)
             elif osp.basename(p)[4] == "y":
-                y_domain.append(d)
+                y.append(d)
             elif osp.basename(p) == "headerInfo.npy":
-                meta_domain = d
-        X_domain = np.concatenate(X_domain)
-        y_domain = np.concatenate(y_domain)
+                meta = d
+        X = np.concatenate(X)
+        y = np.concatenate(y)
+        return X, y, meta
 
-        return X_domain, y_domain, meta_domain
+
+class BeetlSleepSource(BeetlDataset):
+    def __init__(self):
+        super().__init__(
+            figshare_id=14839659,
+            code="beetlsleepsource",
+            subject_list=range(38),
+        )
+
+    def data_path(self, subject):
+        sign = self.code
+        key_dest = "MNE-{:s}-data".format(sign.lower())
+        path = osp.join(get_dataset_path(sign, None), key_dest)
+
+        filelist = fs_get_file_list(self.figshare_id)
+        reg = fs_get_file_hash(filelist)
+        fsn = fs_get_file_id(filelist)
+        spath = []
+        for f in fsn.keys():
+            if not osp.exists(
+                osp.join(path, "SleepSource", "s{}r1X.npy".format(subject))
+            ):
+                retrieve(
+                    BEETL_URL + fsn[f],
+                    reg[fsn[f]],
+                    fsn[f],
+                    path,
+                    processor=Unzip(),
+                    downloader=HTTPDownloader(progressbar=True),
+                )
+                zpath = osp.join(path, fsn[f] + ".unzip", "SleepSource")
+                for i in self.subject_list:
+                    for s in [1, 2]:
+                        fx, fy = "s{}r{}X.npy".format(i, s), "s{}r{}y.npy".format(i, s)
+                        shutil.move(osp.join(zpath, fx), osp.join(path, fx))
+                        shutil.move(osp.join(zpath, fy), osp.join(path, fy))
+                shutil.move(
+                    osp.join(zpath, "headerInfo.npy"), osp.join(path, "headerInfo.npy")
+                )
+                os.rmdir(osp.join(path, fsn[f] + ".unzip", "SleepSource"))
+                os.rmdir(osp.join(path, fsn[f] + ".unzip"))
+        for s in [1, 2]:
+            spath.append(osp.join(path, "s{}r{}X.npy".format(subject, s)))
+            spath.append(osp.join(path, "s{}r{}y.npy".format(subject, s)))
+        spath.append(osp.join(path, "headerInfo.npy"))
+        return spath
+
+    def get_data(self, path=None, subjects=None):
+        """Get data as list of numpy array, labels and metadata
+
+        Parameters
+        ----------
+        path: str | None
+            Path to download the data, store in ~/mne_data if None
+        subjects: list | None
+            list of subject, default=None to select all subjects
+
+        Returns
+        --------
+        X_domain: list of ndarray, shape (n_trials, n_electrodes, n_samples)
+            one ndarray for each dataset, with data
+        y_domain: list of ndarray, shape (n_trials)
+            label for a dataset
+        metadata_domain: list of DataFrame
+            list of metadata per dataset
+        """
+        pass
