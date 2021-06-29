@@ -1,6 +1,8 @@
-from beetl.task_sleep import BeetlSleepDataset
-ds = BeetlSleepDataset()
-ds.download()
+from beetl.task_datasets import BeetlSleepTutorial, BeetlSleepSource
+
+
+ds = BeetlSleepTutorial()
+path = ds.download()
 
 # Load all subject data
 X, y, info = ds.get_data()
@@ -10,3 +12,12 @@ X, y, info = ds.get_data()
 X_source_train, y_source_train, info = ds.get_data(subjects=range(5))
 X_target_train, y_target_train, info = ds.get_data(subjects=range(5, 8))
 X_target_test, y_target_test, _ = ds.get_data(subjects=range(8, 10))
+
+################################
+# For Sleep Source
+
+ds = BeetlSleepSource()
+path = ds.download()
+
+# Load all subject data
+X, y, info = ds.get_data()

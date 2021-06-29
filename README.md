@@ -15,7 +15,7 @@ We offer two specific challenges to promote the development of EEG decoding to u
 You could use your own [Conda](https://www.anaconda.com/products/individual) environment or create a new one with:
 
 ```
-$ conda create --name beetl python=3.9 numpy scikit-learn=0.23
+$ conda create --name beetl numpy scikit-learn=0.23
 $ conda activate beetl
 $ pip install git+https://github.com/sylvchev/beetl-competition
 ```
@@ -27,8 +27,8 @@ If you use your own conda environment, you just need to type `pip install git+ht
 Once beetl is installed, you could download the data with, 'path' returns the folder name contains the data
 
 ```
-from beetl.task_sleep import BeetlSleepDataset
-ds = BeetlSleepDataset()
+from beetl.task_datasets import BeetlSleepTutorial, BeetlSleepSource, BeetlSleepLeaderboard, BeetlMILeaderboard
+ds = BeetlSleepTutorial()
 path = ds.download()
 X, y, info = ds.get_data()
 ```
