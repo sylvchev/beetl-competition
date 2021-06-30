@@ -261,62 +261,35 @@ class BeetlSleepLeaderboard(BeetlDataset):
                 zpath = osp.join(path, fsn[f] + ".unzip", "LeaderboardSleep")
                 os.mkdir(osp.join(path, "sleep_target"))
                 os.mkdir(osp.join(path, "testing"))
+                zptr = osp.join(zpath, "sleep_target")
+                ptr = osp.join(path, "sleep_target")
+                zpte = osp.join(zpath, "testing")
+                pte = osp.join(path, "testing")
                 for i in self.subject_list:
                     for s in [1, 2]:
                         if i < 6:
-                            zpt = osp.join(zpath, "sleep_target")
-                            pt = osp.join(path, "sleep_target")
                             fx = "leaderboard_s{}r{}X.npy".format(i, s)
                             fy = "leaderboard_s{}r{}y.npy".format(i, s)
-                            shutil.move(osp.join(zpt, fx), osp.join(pt, fx))
-                            shutil.move(osp.join(zpt, fy), osp.join(pt, fy))
+                            shutil.move(osp.join(zptr, fx), osp.join(ptr, fx))
+                            shutil.move(osp.join(zptr, fy), osp.join(ptr, fy))
                         else:
-                            zpt = osp.join(zpath, "testing")
-                            pt = osp.join(path, "testing")
                             fx = "leaderboard_s{}r{}X.npy".format(i, s)
-                            shutil.move(osp.join(zpt, fx), osp.join(pt, fx))
-
-                shutil.move(
-                    osp.join(zpath, "sleep_target", "headerInfo.npy"),
-                    osp.join(path, "sleep_target", "headerInfo.npy"),
-                )
-                os.rmdir(
-                    osp.join(
-                        path, fsn[f] + ".unzip", "LeaderboardSleep", "sleep_target"
-                    )
-                )
-                os.rmdir(
-                    osp.join(path, fsn[f] + ".unzip", "LeaderboardSleep", "testing")
-                )
-                os.rmdir(osp.join(path, fsn[f] + ".unzip", "LeaderboardSleep"))
+                            shutil.move(osp.join(zpte, fx), osp.join(pte, fx))
+                hi = "headerInfo.npy"
+                shutil.move(osp.join(zptr, hi), osp.join(ptr, hi))
+                os.rmdir(zptr)
+                os.rmdir(zpte)
+                os.rmdir(zpath)
                 os.rmdir(osp.join(path, fsn[f] + ".unzip"))
         for s in [1, 2]:
             if subject < 6:
-                spath.append(
-                    osp.join(
-                        path,
-                        "sleep_target",
-                        "leaderboard_s{}r{}X.npy".format(subject, s),
-                    )
-                )
-                spath.append(
-                    osp.join(
-                        path,
-                        "sleep_target",
-                        "leaderboard_s{}r{}y.npy".format(subject, s),
-                    )
-                )
+                fd = "sleep_target"
+                fy = "leaderboard_s{}r{}y.npy".format(subject, s)
+                spath.append(osp.join(path, fd, fy))
             else:
-                spath.append(
-                    osp.join(
-                        path, "testing", "leaderboard_s{}r{}X.npy".format(subject, s)
-                    )
-                )
-                spath.append(
-                    osp.join(
-                        path, "testing", "leaderboard_s{}r{}X.npy".format(subject, s)
-                    )
-                )
+                fd = "testing"
+            fx = "leaderboard_s{}r{}X.npy".format(subject, s)
+            spath.append(osp.join(path, fd, fx))
         spath.append(osp.join(path, "sleep_target", "headerInfo.npy"))
         return spath
 
