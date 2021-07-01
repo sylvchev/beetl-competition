@@ -370,7 +370,7 @@ class BeetlMILeaderboard(BeetlDataset):
                     processor=Unzip(),
                     downloader=HTTPDownloader(progressbar=True),
                 )
-                zpath = osp.join(path, fsn[f] + ".unzip", "LeaderboardMI")
+                zpath = osp.join(path, fsn[f] + ".unzip", "leaderboardMI")
                 for s in range(1, 6):
                     os.mkdir(osp.join(path, "S{}".format(s)))
                     os.mkdir(osp.join(path, "S{}".format(s), "training"))
