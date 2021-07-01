@@ -400,7 +400,7 @@ class BeetlMILeaderboard(BeetlDataset):
                     os.rmdir(zpte)
                     zpths = osp.join(zpath, "S{}".format(s))
                     os.rmdir(zpths)
-                os.rmdir(osp.join(path, fsn[f] + ".unzip", "LeaderboardMI"))
+                os.rmdir(osp.join(path, fsn[f] + ".unzip", "leaderboardMI"))
                 os.rmdir(osp.join(path, fsn[f] + ".unzip"))
         spath = []
         ptr = osp.join(path, "S{}".format(subject), "training")
